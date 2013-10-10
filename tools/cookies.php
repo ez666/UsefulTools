@@ -63,7 +63,7 @@ if($_REQUEST['action'] == 'php') {
     $(function(){
       $("#html-form").submit(function() {
         $.post($("#html-form").attr("action"), $("#html-form"), function(data){
-          $.cookie("mycookie", form2string($("#html-form")), {expires:365});
+          save2cookie($("#html-form"),'mycookie',365);
         });
         return false;
       });
@@ -78,16 +78,22 @@ if($_REQUEST['action'] == 'php') {
         return false;
       });
 
+      function save2cookie($form, cookie, expiry){
+        $.cookie(cookie, form2string($form), {expires:expiry});
+      }
+      
       function form2string($form){
         return JSON.stringify($form.serializeArray());
       }
 
-      function string2form(form, serializedStr){
+      function string2form($form, serializedStr){
         var fields = JSON.parse(serializedStr);
-        for(var i=0; i< fields.length; i++){
-          var controlName = fields[i].name;
-          var controlValue = fields[i].value;
-          form.find('[name="'+ controlName +'"]').val(controlValue);
+        if(fields){
+          for(var i=0; i< fields.length; i++){
+            var controlName = fields[i].name;
+            var controlValue = fields[i].value;
+            $form.find('[name="'+ controlName +'"]').val(controlValue);
+          }
         }
       }  
     });
